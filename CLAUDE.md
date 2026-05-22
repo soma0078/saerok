@@ -12,14 +12,15 @@
 ## 폴더 구조
 
 ```
-app/                  # Expo Router 라우트 (화면만)
-components/
-  ui/                 # Button, Text 등 atomic 컴포넌트
-hooks/                # 커스텀 훅 — 비즈니스 로직
-lib/
-  storage.ts          # AsyncStorage 접근 단일 진입점
-types/
-  index.ts            # 전체 타입 정의
+src/
+  app/                # Expo Router 라우트 (화면만)
+  components/
+    ui/               # Button, Text 등 atomic 컴포넌트
+  hooks/              # 커스텀 훅 — 비즈니스 로직
+  lib/
+    storage.ts        # AsyncStorage 접근 단일 진입점
+  types/
+    index.ts          # 전체 타입 정의
 ```
 
 ## 코드 규칙
@@ -53,6 +54,13 @@ types/
 4. type: `feat` / `fix` / `chore` / `docs` / `refactor`
 5. 제목은 무엇을 했는지가 아니라 왜·무엇이 변했는지 중심으로 작성
 6. 자명한 변경에는 body 생략
+
+## 트러블슈팅 규칙
+
+이슈 해결 확인 후 `docs/TROUBLESHOOTING.md` 기록 여부를 사용자에게 묻고, 승인 시 아래 형식으로 작성:
+1. 증상 (에러 메시지 포함)
+2. 원인
+3. 해결 방법
 
 ## 주요 명령어
 
