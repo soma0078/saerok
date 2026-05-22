@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { storage } from '../lib/storage';
+import { storage } from '@/lib/storage';
 
 export function useOnboardingStatus() {
   const [isCompleted, setIsCompleted] = useState(false);
@@ -12,5 +12,10 @@ export function useOnboardingStatus() {
     });
   }, []);
 
-  return { isCompleted, isLoading };
+  const complete = async () => {
+    await storage.onboardingCompleted.set(true);
+    setIsCompleted(true);
+  };
+
+  return { isCompleted, isLoading, complete };
 }
