@@ -1,7 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { Category, Quote } from '@/types';
 
 const KEYS = {
   onboardingCompleted: '@saerok/onboardingCompleted',
+  categories: '@saerok/categories',
+  quotes: '@saerok/quotes',
 } as const;
 
 async function get<T>(key: string): Promise<T | null> {
@@ -17,5 +20,13 @@ export const storage = {
   onboardingCompleted: {
     get: () => get<boolean>(KEYS.onboardingCompleted),
     set: (value: boolean) => set(KEYS.onboardingCompleted, value),
+  },
+  categories: {
+    get: () => get<Category[]>(KEYS.categories),
+    set: (value: Category[]) => set(KEYS.categories, value),
+  },
+  quotes: {
+    get: () => get<Quote[]>(KEYS.quotes),
+    set: (value: Quote[]) => set(KEYS.quotes, value),
   },
 };

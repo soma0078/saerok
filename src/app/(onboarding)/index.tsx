@@ -3,7 +3,7 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
+  Pressable,
   Dimensions,
 } from "react-native";
 import { router } from "expo-router";
@@ -77,14 +77,14 @@ export default function OnboardingSlides() {
           ))}
         </View>
 
-        <TouchableOpacity
+        <Pressable
           className="bg-gray-900 rounded-2xl py-4 items-center"
           onPress={handleNext}
         >
           <Text className="text-white text-base font-semibold">
             {isLast ? "시작하기" : "다음"}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
