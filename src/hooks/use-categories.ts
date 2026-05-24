@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { storage } from '@/lib/storage';
 import type { Category } from '@/types';
 
 export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
 
-  useEffect(() => {
-    storage.categories.get().then((data) => setCategories(data ?? []));
+  const load = useCallback(async () => {
+    const data = await storage.categories.get();
+    setCategories(data ?? []);
   }, []);
+
+  useEffect(() => { load(); }, [load]);
 
   const addCategory = async (name: string): Promise<Category> => {
     const category: Category = {
@@ -21,5 +24,5 @@ export function useCategories() {
     return category;
   };
 
-  return { categories, addCategory };
+  return { categories, addCategory, reload: load };
 }

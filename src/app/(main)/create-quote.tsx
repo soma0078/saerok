@@ -1,29 +1,42 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useCategories } from '@/hooks/use-categories';
 import { useQuotes } from '@/hooks/use-quotes';
 
 export default function CreateQuote() {
+  const { quoteId } = useLocalSearchParams<{ quoteId?: string }>();
+  const isEdit = !!quoteId;
+
   const [content, setContent] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
 
   const { categories, addCategory } = useCategories();
-  const { addQuote } = useQuotes();
+  const { quotes, addQuote, updateQuote } = useQuotes();
+
+  useEffect(() => {
+    if (!isEdit) return;
+    const quote = quotes.find((q) => q.id === quoteId);
+    if (quote) {
+      setContent(quote.content);
+      setSelectedCategoryId(quote.categoryId);
+    }
+  }, [isEdit, quoteId, quotes]);
 
   const canSave =
     content.trim().length > 0 &&
-    (selectedCategoryId !== null || (showNewCategoryInput && newCategoryName.trim().length > 0));
+    (selectedCategoryId !== null ||
+      (showNewCategoryInput && newCategoryName.trim().length > 0));
 
   const handleSave = async () => {
     if (!canSave) return;
@@ -34,7 +47,11 @@ export default function CreateQuote() {
       categoryId = created.id;
     }
 
-    await addQuote(content.trim(), categoryId!);
+    if (isEdit) {
+      await updateQuote(quoteId!, content.trim(), categoryId!);
+    } else {
+      await addQuote(content.trim(), categoryId!);
+    }
     router.back();
   };
 
@@ -58,9 +75,13 @@ export default function CreateQuote() {
         <Pressable onPress={() => router.back()}>
           <Text className="text-base text-gray-500">취소</Text>
         </Pressable>
-        <Text className="text-base font-semibold text-gray-900">새 문장</Text>
+        <Text className="text-base font-semibold text-gray-900">
+          {isEdit ? '문장 수정' : '새 문장'}
+        </Text>
         <Pressable onPress={handleSave} disabled={!canSave}>
-          <Text className={`text-base font-semibold ${canSave ? 'text-gray-900' : 'text-gray-300'}`}>
+          <Text
+            className={`text-base font-semibold ${canSave ? 'text-gray-900' : 'text-gray-300'}`}
+          >
             저장
           </Text>
         </Pressable>
@@ -74,7 +95,7 @@ export default function CreateQuote() {
           multiline
           value={content}
           onChangeText={setContent}
-          autoFocus
+          autoFocus={!isEdit}
         />
 
         <View className="mt-8">
@@ -100,7 +121,7 @@ export default function CreateQuote() {
               </Pressable>
             ))}
 
-            {!showNewCategoryInput && (
+            {showNewCategoryInput ? null : (
               <Pressable
                 onPress={handleNewCategoryPress}
                 className="px-4 py-2 rounded-full border border-dashed border-gray-300"
@@ -110,7 +131,7 @@ export default function CreateQuote() {
             )}
           </View>
 
-          {showNewCategoryInput && (
+          {showNewCategoryInput ? (
             <TextInput
               className="mt-3 px-4 py-2 rounded-full border border-gray-900 text-sm text-gray-900"
               placeholder="카테고리 이름"
@@ -119,7 +140,7 @@ export default function CreateQuote() {
               onChangeText={setNewCategoryName}
               autoFocus
             />
-          )}
+          ) : null}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
