@@ -34,6 +34,15 @@ export default function Login() {
           >
             <Text className="text-gray-900 text-base font-semibold">카카오로 계속하기</Text>
           </Pressable>
+
+          {__DEV__ && (
+            <Pressable
+              className="py-4 items-center"
+              onPress={() => router.replace('/(onboarding)/notification')}
+            >
+              <Text className="text-red-400 text-sm">[DEV] 로그인 건너뛰기</Text>
+            </Pressable>
+          )}
         </View>
       )}
     </View>

@@ -19,11 +19,13 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
 
   // Google 로그인 요청 생성
-  const [, googleResponse, promptGoogleAsync] = Google.useAuthRequest({
+  const [googleRequest, googleResponse, promptGoogleAsync] = Google.useAuthRequest({
     iosClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS,
     androidClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID,
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB,
   });
+
+  console.log('[Google redirectUri]', googleRequest?.redirectUri);
 
   // Kakao 로그인 요청 생성
   const [kakaoRequest, kakaoResponse, promptKakaoAsync] = useAuthRequest(
