@@ -7,7 +7,6 @@ import {
   Dimensions,
 } from "react-native";
 import { router } from "expo-router";
-import { useOnboardingStatus } from "@/hooks/use-onboarding-status";
 
 const { width } = Dimensions.get("window");
 
@@ -27,14 +26,12 @@ const SLIDES = [
 export default function OnboardingSlides() {
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
-  const { complete } = useOnboardingStatus();
 
-  const handleNext = async () => {
+  const handleNext = () => {
     if (activeIndex < SLIDES.length - 1) {
       flatListRef.current?.scrollToIndex({ index: activeIndex + 1 });
     } else {
-      await complete();
-      router.replace("/(main)");
+      router.replace('/(onboarding)/login');
     }
   };
 
