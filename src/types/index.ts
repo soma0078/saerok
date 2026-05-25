@@ -1,3 +1,11 @@
+export interface User {
+  id: string;
+  provider: 'google' | 'kakao';
+  nickname: string | null;
+  profileImage: string | null;
+  createdAt: string;
+}
+
 export interface NotificationSettings {
   categoryIds: string[];
   dailyTimes: string[];   // ["09:00", "21:00"]

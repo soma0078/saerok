@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { Category, NotificationSettings, Quote } from '@/types';
+import type { Category, NotificationSettings, Quote, User } from '@/types';
 
 const KEYS = {
   onboardingCompleted: '@saerok/onboardingCompleted',
+  user: '@saerok/user',
   categories: '@saerok/categories',
   quotes: '@saerok/quotes',
   notificationSettings: '@saerok/notificationSettings',
@@ -21,6 +22,10 @@ export const storage = {
   onboardingCompleted: {
     get: () => get<boolean>(KEYS.onboardingCompleted),
     set: (value: boolean) => set(KEYS.onboardingCompleted, value),
+  },
+  user: {
+    get: () => get<User>(KEYS.user),
+    set: (value: User) => set(KEYS.user, value),
   },
   categories: {
     get: () => get<Category[]>(KEYS.categories),
