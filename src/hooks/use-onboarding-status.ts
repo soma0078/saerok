@@ -17,5 +17,10 @@ export function useOnboardingStatus() {
     setIsCompleted(true);
   };
 
-  return { isCompleted, isLoading, complete };
+  const reset = async () => {
+    await storage.onboardingCompleted.set(false);
+    setIsCompleted(false);
+  };
+
+  return { isCompleted, isLoading, complete, reset };
 }
