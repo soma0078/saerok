@@ -16,24 +16,32 @@ app/
 ├── (onboarding)/              # 최초 1회
 │   ├── _layout.tsx
 │   ├── index.tsx              # O-01~02: 가치/기능 소개 슬라이드
-│   ├── notification.tsx       # O-03: 알림 권한 요청
-│   └── profile.tsx            # O-04: 프로필 등록 (건너뛰기 가능)
+│   └── login.tsx              # O-03: 소셜 로그인
 │
 └── (main)/                    # 메인
     ├── _layout.tsx
     ├── index.tsx              # Home — 문장 목록 (카테고리 탭)
     ├── create-quote.tsx       # Modal: 새 문장 등록
-    └── setting.tsx            # Modal: 알림 설정
+    └── setting.tsx            # Modal: 알림 설정 + 알림 권한 요청
 ```
 
 ### 진입 조건
 
 ```
 앱 시작 시 (app/index.tsx):
-  if (!onboardingCompleted) → /(onboarding)
-  else                      → /(main)
+  if (onboardingCompleted AND user 존재) → /(main)
+  else                                   → /(onboarding)
+```
 
-※ 소셜 로그인은 후순위 — 현재 onboardingCompleted만 체크
+### 온보딩 플로우
+
+```
+슬라이드 (O-01~02)
+  → 로그인 (Google / Kakao)
+  → onboardingCompleted 저장 → /(main)
+
+※ 알림 권한은 온보딩에서 요청하지 않음.
+  알림 설정 화면(setting.tsx) 진입 시 contextual 요청.
 ```
 
 ## 3. 데이터 모델
@@ -117,9 +125,9 @@ interface NotificationSettings {
 
 ## 6. 화면 → 데이터 의존 관계
 
-| 화면             | 읽기                                           | 쓰기                   |
-| ---------------- | ---------------------------------------------- | ---------------------- |
-| O-04 프로필 등록 | —                                              | `@saerok/user`         |
-| A Home           | `categories`, `quotes`                         | —                      |
-| B 새 문장 등록   | `categories`                                   | `quotes`, `categories` |
-| C 알림 설정      | `categories`, `quotes`, `notificationSettings` | `notificationSettings` |
+| 화면           | 읽기                                           | 쓰기                         |
+| -------------- | ---------------------------------------------- | ---------------------------- |
+| O-03 로그인    | —                                              | `@saerok/user`, `@saerok/onboardingCompleted` |
+| A Home         | `categories`, `quotes`                         | —                            |
+| B 새 문장 등록 | `categories`                                   | `quotes`, `categories`       |
+| C 알림 설정    | `categories`, `quotes`, `notificationSettings` | `notificationSettings`       |
