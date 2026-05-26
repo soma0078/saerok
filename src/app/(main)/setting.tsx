@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   Alert,
+  Linking,
   Pressable,
   ScrollView,
   Text,
@@ -8,6 +9,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { useCategories } from '@/hooks/use-categories';
+import { useNotificationPermission } from '@/hooks/use-notification-permission';
 import { useNotificationSettings } from '@/hooks/use-notification-settings';
 import type { NotificationSettings } from '@/types';
 
@@ -20,11 +22,14 @@ const PERIOD_OPTIONS: { label: string; value: NotificationSettings['period'] }[]
 
 export default function Setting() {
   const { categories } = useCategories();
+  const { request } = useNotificationPermission();
   const { settings, saveSettings, deactivate } = useNotificationSettings();
 
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>(['09:00']);
   const [period, setPeriod] = useState<NotificationSettings['period']>('indefinite');
+
+  useEffect(() => { request(); }, []);
 
   useEffect(() => {
     if (!settings) return;
@@ -63,7 +68,18 @@ export default function Setting() {
       isActive: true,
     });
 
-    if (saved) router.back();
+    if (saved) {
+      router.back();
+    } else {
+      Alert.alert(
+        '알림 권한이 필요해요',
+        '기기 설정에서 새록의 알림을 허용해 주세요.',
+        [
+          { text: '취소', style: 'cancel' },
+          { text: '설정으로 이동', onPress: () => Linking.openSettings() },
+        ],
+      );
+    }
   };
 
   const handleDeactivate = () => {

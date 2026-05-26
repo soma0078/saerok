@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { Redirect } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useOnboardingStatus } from '@/hooks/use-onboarding-status';
+import { useEffect } from "react";
+import { Redirect } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useOnboardingStatus } from "@/hooks/use-onboarding-status";
 
 export default function Index() {
   const { isCompleted, isLoading } = useOnboardingStatus();
@@ -14,5 +14,9 @@ export default function Index() {
 
   if (isLoading) return null;
 
-  return <Redirect href={isCompleted ? '/(main)' : '/(onboarding)'} />;
+  if (__DEV__) {
+    return <Redirect href="/(onboarding)" />;
+  }
+
+  return <Redirect href={isCompleted ? "/(main)" : "/(onboarding)"} />;
 }

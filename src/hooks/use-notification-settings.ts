@@ -68,14 +68,9 @@ export function useNotificationSettings() {
 
   useEffect(() => { load(); }, [load]);
 
-  const requestPermission = async (): Promise<boolean> => {
-    const { status } = await Notifications.requestPermissionsAsync();
-    return status === 'granted';
-  };
-
   const saveSettings = async (next: NotificationSettings): Promise<boolean> => {
-    const granted = await requestPermission();
-    if (!granted) return false;
+    const { status } = await Notifications.getPermissionsAsync();
+    if (status !== 'granted') return false;
 
     await storage.notificationSettings.set(next);
     setSettings(next);

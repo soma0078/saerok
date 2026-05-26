@@ -2,12 +2,15 @@ import { useEffect } from 'react';
 import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '@/hooks/use-auth';
+import { useOnboardingStatus } from '@/hooks/use-onboarding-status';
 
 export default function Login() {
   const { user, isLoading, loginWithGoogle, loginWithKakao } = useAuth();
+  const { complete } = useOnboardingStatus();
 
   useEffect(() => {
-    if (user) router.replace('/(onboarding)/notification');
+    if (!user) return;
+    complete().then(() => router.replace('/(main)'));
   }, [user]);
 
   return (
@@ -38,7 +41,7 @@ export default function Login() {
           {__DEV__ && (
             <Pressable
               className="py-4 items-center"
-              onPress={() => router.replace('/(onboarding)/notification')}
+              onPress={() => complete().then(() => router.replace('/(main)'))}
             >
               <Text className="text-red-400 text-sm">[DEV] 로그인 건너뛰기</Text>
             </Pressable>
