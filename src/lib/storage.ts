@@ -39,4 +39,5 @@ export const storage = {
     get: () => get<NotificationSettings>(KEYS.notificationSettings),
     set: (value: NotificationSettings) => set(KEYS.notificationSettings, value),
   },
+  clearAll: () => AsyncStorage.multiRemove(Object.values(KEYS)),
 };

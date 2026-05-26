@@ -4,6 +4,7 @@ import { router, useFocusEffect } from "expo-router";
 import { useCategories } from "@/hooks/use-categories";
 import { useQuotes } from "@/hooks/use-quotes";
 import { QuoteCard } from "@/components/quote-card";
+import { storage } from "@/lib/storage";
 
 const ALL_TAB = "__all__";
 
@@ -48,6 +49,16 @@ export default function Home() {
       <View className="flex-row items-center justify-between px-5 pt-14 pb-4">
         <Text className="text-xl font-bold text-gray-900">새록</Text>
         <View className="flex-row gap-4 items-center">
+          {__DEV__ && (
+            <Pressable
+              onPress={async () => {
+                await storage.clearAll();
+                router.replace("/(onboarding)");
+              }}
+            >
+              <Text className="text-xs text-red-400">초기화</Text>
+            </Pressable>
+          )}
           <Pressable onPress={() => router.push("/(main)/setting")}>
             <Text className="text-xl text-gray-900">🔔</Text>
           </Pressable>
