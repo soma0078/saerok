@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, FlatList, Pressable, ScrollView, Text, View } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { useCategories } from "@/hooks/use-categories";
 import { useQuotes } from "@/hooks/use-quotes";
@@ -10,7 +10,7 @@ const ALL_TAB = "__all__";
 
 export default function Home() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(ALL_TAB);
-  const { categories, reload: reloadCategories } = useCategories();
+  const { categories, updateCategory, deleteCategory, reload: reloadCategories } = useCategories();
   const { quotes, deleteQuote, reload: reloadQuotes } = useQuotes();
 
   useFocusEffect(
@@ -42,6 +42,38 @@ export default function Home() {
       deleteQuote(id);
     },
     [deleteQuote],
+  );
+
+  const handleCategoryLongPress = useCallback(
+    (id: string, name: string) => {
+      const quoteCount = quotes.filter((q) => q.categoryId === id).length;
+      Alert.alert(name, undefined, [
+        {
+          text: '이름 수정',
+          onPress: () =>
+            Alert.prompt('카테고리 이름 수정', undefined, (newName) => {
+              if (newName?.trim()) updateCategory(id, newName.trim());
+            }, 'plain-text', name),
+        },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: () =>
+            Alert.alert(
+              `'${name}' 삭제`,
+              quoteCount > 0
+                ? `문장 ${quoteCount}개도 함께 삭제됩니다.`
+                : '카테고리를 삭제할까요?',
+              [
+                { text: '취소', style: 'cancel' },
+                { text: '삭제', style: 'destructive', onPress: () => deleteCategory(id) },
+              ],
+            ),
+        },
+        { text: '취소', style: 'cancel' },
+      ]);
+    },
+    [updateCategory, deleteCategory, quotes],
   );
 
   return (
@@ -95,6 +127,7 @@ export default function Home() {
             <Pressable
               key={cat.id}
               onPress={() => setSelectedCategoryId(cat.id)}
+              onLongPress={() => handleCategoryLongPress(cat.id, cat.name)}
               className={`px-4 py-2 rounded-full border ${
                 selectedCategoryId === cat.id
                   ? "bg-gray-900 border-gray-900"

@@ -24,5 +24,20 @@ export function useCategories() {
     return category;
   };
 
-  return { categories, addCategory, reload: load };
+  const updateCategory = async (id: string, name: string): Promise<void> => {
+    const updated = categories.map((c) => (c.id === id ? { ...c, name } : c));
+    await storage.categories.set(updated);
+    setCategories(updated);
+  };
+
+  const deleteCategory = async (id: string): Promise<void> => {
+    const updatedCategories = categories.filter((c) => c.id !== id);
+    await storage.categories.set(updatedCategories);
+    setCategories(updatedCategories);
+
+    const quotes = (await storage.quotes.get()) ?? [];
+    await storage.quotes.set(quotes.filter((q) => q.categoryId !== id));
+  };
+
+  return { categories, addCategory, updateCategory, deleteCategory, reload: load };
 }
